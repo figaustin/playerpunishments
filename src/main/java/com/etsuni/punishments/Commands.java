@@ -22,7 +22,7 @@ public class Commands implements CommandExecutor {
     @Override
     public boolean onCommand(CommandSender sender, Command command, String label, String[] args) {
         if (sender instanceof Player) {
-            if (command.getName().equalsIgnoreCase("ban") || command.getName().equals("mute") || command.getName().equalsIgnoreCase("blacklist")) {
+            if (command.getName().equalsIgnoreCase("ban") || command.getName().equals("mute")) {
                 if (args.length > 0) {
 
                     Punishment punishment = new Punishment(plugin);
@@ -151,8 +151,25 @@ public class Commands implements CommandExecutor {
                             punishment.punishPlayer(PunishmentType.KICK, ((Player) sender).getUniqueId().toString(), uuid.toString(), args1, reason, "kicked");
                         }
                     } else {
-                        sender.sendMessage(ChatColor.DARK_RED + "Please specify a player's name");
+                        sender.sendMessage(ChatColor.RED + "Please specify a reason!");
                     }
+
+                    }else {
+                    sender.sendMessage(ChatColor.RED + "Please specify a player's name");
+                }
+            }
+
+            //BLACKLIST COMMAND
+            else if(command.getName().equalsIgnoreCase("blacklist")) {
+                if(args.length > 0) {
+                    OfflinePlayer player = Bukkit.getOfflinePlayer(args[0]);
+                    UUID uuid = player.getUniqueId();
+                    Punishment punishment = new Punishment(plugin);
+
+                    punishment.punishPlayer(PunishmentType.BLACKLIST, ((Player) sender).getUniqueId().toString(),uuid.toString(),
+                            null, null, "blacklisted");
+                } else {
+                    sender.sendMessage(ChatColor.RED + "Please specify a player's name");
                 }
             }
         }

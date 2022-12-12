@@ -13,6 +13,7 @@ import org.bukkit.OfflinePlayer;
 import org.bukkit.entity.Player;
 
 import java.time.LocalDateTime;
+import java.time.ZoneId;
 import java.time.ZoneOffset;
 import java.util.*;
 
@@ -26,7 +27,7 @@ public class Punishment {
     public void punishPlayer(PunishmentType type, String issuerUUID, String punisheeUUID, String duration, String reason, String keyword) {
         playerInDB(punisheeUUID);
         Document find = new Document("uuid", punisheeUUID);
-        LocalDateTime now = LocalDateTime.now();
+        LocalDateTime now = LocalDateTime.now(ZoneOffset.UTC);
 
         Player sender = Bukkit.getPlayer(UUID.fromString(issuerUUID));
         OfflinePlayer punished = Bukkit.getOfflinePlayer(UUID.fromString(punisheeUUID));
@@ -46,6 +47,19 @@ public class Punishment {
                 sender.sendMessage(ChatColor.RED + "That player is not online!");
             }
             return;
+        }
+
+        if(type == PunishmentType.BLACKLIST) {
+            BasicDBObject punishments = new BasicDBObject("punishments", new BasicDBObject("date_issued", now)
+                    .append("reason", reason)
+                    .append("type", type)
+                    .append("duration", "Permanent")
+                    .append("expiration", "Permanent")
+                    .append("expired", true));
+            BasicDBObject update = new BasicDBObject("$push", punishments);
+            if(punished.isOnline()) {
+                punished.getPlayer().kickPlayer("You have been blacklisted from this server.");
+            }
         }
 
         if(duration == null) {
@@ -133,7 +147,7 @@ public class Punishment {
         }
 
         String[] strArr = splitDuration.split("/");
-        LocalDateTime time = LocalDateTime.now();
+        LocalDateTime time = LocalDateTime.now(ZoneOffset.UTC);
 
         //Loop through our previous loop's string that was set... that is now split into a string[] from the '/' we put in. look for the keywords
         //and parse the int that's in the string and add the correct amount of time.
@@ -165,7 +179,7 @@ public class Punishment {
     }
 
     public Boolean isPunishmentExpired(String uuid) {
-        LocalDateTime now = LocalDateTime.now();
+        LocalDateTime now = LocalDateTime.now(ZoneOffset.UTC);
         Document find = new Document("uuid", uuid.toString());
         FindIterable<Document> finds = plugin.getCollection().find(find);
 

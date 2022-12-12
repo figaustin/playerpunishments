@@ -27,6 +27,9 @@ public class Events implements Listener {
         Player player = event.getPlayer();
         UUID uuid = player.getUniqueId();
         Punishment punishment = new Punishment(plugin);
+        if(punishment.getPunishmentType(uuid.toString()) == null) {
+            return;
+        }
 
         if(punishment.getPunishmentType(uuid.toString()).equalsIgnoreCase(PunishmentType.TEMPBAN.toString())
         || punishment.getPunishmentType(uuid.toString()).equalsIgnoreCase(PunishmentType.PERMABAN.toString())) {
@@ -34,7 +37,7 @@ public class Events implements Listener {
                 event.disallow(PlayerLoginEvent.Result.KICK_BANNED, "You are banned for: " + punishment.getPunishmentReason(uuid.toString()));
             }
         } else if(punishment.getPunishmentType(uuid.toString()).equalsIgnoreCase(PunishmentType.BLACKLIST.toString())) {
-            event.disallow(PlayerLoginEvent.Result.KICK_BANNED, "You have been blacklisted from this server");
+            event.disallow(PlayerLoginEvent.Result.KICK_BANNED, "You are blacklisted in this server");
         }
     }
 
