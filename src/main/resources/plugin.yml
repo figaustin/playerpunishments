@@ -1,0 +1,20 @@
+name: Punishments
+version: '${project.version}'
+main: com.etsuni.punishments.Punishments
+api-version: 1.19
+commands:
+  ban:
+    description: Ban command
+    aliases: [tempban]
+  history:
+    description: Open player ban history
+  unban:
+    description: Unban player command
+  mute:
+    description: Mutes a player
+  unmute:
+    description: Unmutes a player
+  blacklist:
+    description: Blacklists a player
+  kick:
+    description: Kicks a player
